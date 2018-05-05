@@ -7,5 +7,6 @@ matrix:
       mono: none
     - dotnet: 1.1.8
       mono: none
+    - dotnet: 1.1.5
+      mono: none
     - mono: latest
-
