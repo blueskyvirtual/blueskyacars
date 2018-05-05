@@ -16,6 +16,7 @@ namespace BlueskyAcars
 {
     public partial class Form1 : Form
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         const int WM_USER_SIMCONNECT = 0x0402;
         SimConnect simconnect = null;
 
@@ -38,6 +39,9 @@ namespace BlueskyAcars
             public double latitude;
             public double longitude;
             public double altitude;
+            public double altitude_agl;
+            public double weight_on_wheels;
+            public double vertical_speed;
         };
 
         public Form1()
@@ -68,10 +72,13 @@ namespace BlueskyAcars
                 simconnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(simconnect_OnRecvQuit);
                 simconnect.OnRecvException += new SimConnect.RecvExceptionEventHandler(simconnect_OnRecvException);
 
-                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED); // aircraft title
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // latitude
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // longitude
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // altitude
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "PLANE ALT ABOVE GROUND", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // altitude_agl
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "SIM ON GROUND", "Bool", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // weight_on_wheels
+                simconnect.AddToDataDefinition(DEFINITIONS.Struct1, "VELOCITY WORLD Y", "feet per second", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED); // vertical_speed
 
                 simconnect.RegisterDataDefineStruct<Struct1>(DEFINITIONS.Struct1);
                 simconnect.OnRecvSimobjectDataBytype += new SimConnect.RecvSimobjectDataBytypeEventHandler(simconnect_OnRecvSimobjectDataBytype);
@@ -114,9 +121,12 @@ namespace BlueskyAcars
                 case DATA_REQUESTS.REQUEST_1:
                     Struct1 s1 = (Struct1)data.dwData[0];
 
-                    txtLatitude.Text = s1.latitude.ToString();
-                    txtLongitude.Text = s1.longitude.ToString();
-                    txtAltitude.Text = s1.altitude.ToString();
+                    log.Debug("Latitude: " + s1.latitude);
+                    log.Debug("Longitude: " + s1.longitude);
+                    log.Debug("Altitude MSL: " + s1.altitude);
+                    log.Debug("Altitude AGL: " + s1.altitude_agl);
+                    log.Debug("Weight on Wheels: " + s1.weight_on_wheels);
+                    log.Debug("Vertical Velocity (fps): " + s1.vertical_speed);
                     break;
 
                 default:
