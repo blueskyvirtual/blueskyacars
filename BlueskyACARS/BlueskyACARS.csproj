@@ -264,9 +264,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bluesky.ico" />
-    <None Include="LICENSE">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="logo2_7rw_icon.ico" />
   </ItemGroup>
   <ItemGroup>
