@@ -3,10 +3,4 @@ solution: BlueskyACARS.sln
 
 matrix:
   include:
-    - dotnet: 2.0.7
-      mono: none
-    - dotnet: 1.1.8
-      mono: none
-    - dotnet: 1.1.5
-      mono: none
     - mono: latest
